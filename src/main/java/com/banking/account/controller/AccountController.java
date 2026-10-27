@@ -18,35 +18,40 @@ public class AccountController
     private final AccountService accountService;
     private final JwtService jwtService;
 
+    //////////////////////////////////////////////////////////////////
+    //
+    //  Constructor Name    : AccountController
+    //
+    //  Description         : Initializes the AccountService and
+    //                        JwtService dependencies using
+    //                        constructor injection.
+    //
+    //  Author              : Shubham Somanath Gadhe
+    //
+    //  Date                : 13/09/2026
+    //
+    //////////////////////////////////////////////////////////////////
+    
     public AccountController(AccountService accountService, JwtService jwtService)
     {
         this.accountService = accountService;
         this.jwtService = jwtService;
     }
-
+    
     //////////////////////////////////////////////////////////////////
     //
     //  Method Name         : createAccount
     //
-    //  Description         : Creates a new bank account for the
-    //                        specified customer.
-    //
-    //                        It extracts the customer's email from
-    //                        the JWT token and identifies the logged-in
-    //                        customer.
-    //
-    //                        It verifies that the requested customer ID
-    //                        belongs to the logged-in customer.
-    //
-    //                        If the customer is authorized, the account
-    //                        is created using the provided account details.
-    //
-    //                        The newly created account details are
-    //                        returned with HTTP CREATED status.
+    //  Description         : Extracts the customer's email from the
+    //                        JWT token and retrieves the logged-in
+    //                        customer's ID. Verifies that the requested
+    //                        customer ID matches the authenticated
+    //                        customer before creating a bank account.
+    //                        Returns the newly created account details.
     //
     //  Author              : Shubham Somanath Gadhe
     //
-    //  Date                : 23/09/2026
+    //  Date                : 13/09/2026
     //
     //////////////////////////////////////////////////////////////////
 
@@ -55,7 +60,7 @@ public class AccountController
             description = "Creates a new bank account for the authenticated customer"
     )
     @PostMapping("/customer/{customerId}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED)    
     public AccountResponseDTO createAccount(@PathVariable("customerId") Long customerID,
                                             @Valid @RequestBody AccountRequestDTO request,
                                             @RequestHeader("Authorization") String authorizationHeader)
@@ -73,26 +78,19 @@ public class AccountController
 
         return accountService.createAccount(customerID, request);
     }
-
+    
     //////////////////////////////////////////////////////////////////
     //
     //  Method Name         : updateAccountStatus
     //
     //  Description         : Updates the status of an existing bank
-    //                        account.
-    //
-    //                        It receives the account ID and the new
-    //                        account status from the request.
-    //
-    //                        It sends the account details to the service
-    //                        to update the account status.
-    //
-    //                        The updated account details are returned
-    //                        as a response DTO.
+    //                        account using the provided account ID
+    //                        and new account status. Returns the
+    //                        updated account details.
     //
     //  Author              : Shubham Somanath Gadhe
     //
-    //  Date                : 23/09/2026
+    //  Date                : 13/09/2026
     //
     //////////////////////////////////////////////////////////////////
 
@@ -101,6 +99,7 @@ public class AccountController
             description = "Updates the status of an existing bank account"
     )
     @PutMapping("/{id}/status")
+    
     public AccountResponseDTO updateAccountStatus(@PathVariable Long id, @RequestParam AccountStatus status)
     {
         return accountService.updateAccountStatus(id, status);
@@ -110,30 +109,24 @@ public class AccountController
     //
     //  Method Name         : getAccountBalance
     //
-    //  Description         : Retrieves the balance and details of a
-    //                        specific account for the logged-in customer.
-    //
-    //                        It extracts the customer's email from
-    //                        the JWT token and identifies the customer.
-    //
-    //                        It retrieves the account balance after
-    //                        verifying the account belongs to the
-    //                        logged-in customer.
-    //
-    //                        The account details are returned as a
-    //                        response DTO.
+    //  Description         : Extracts the customer's email from the
+    //                        JWT token and retrieves the authenticated
+    //                        customer's ID. Fetches the account balance
+    //                        and account details after verifying the
+    //                        account belongs to that customer.
     //
     //  Author              : Shubham Somanath Gadhe
     //
-    //  Date                : 23/09/2026
+    //  Date                : 13/09/2026
     //
     //////////////////////////////////////////////////////////////////
-
+    
     @Operation(
             summary = "Get account balance",
             description = "Returns the balance and details of an account belonging to the authenticated customer"
     )
     @GetMapping("/number/{accountNumber}/balance")
+   
     public AccountResponseDTO getAccountBalance(@PathVariable String accountNumber,
                                                 @RequestHeader("Authorization") String authorizationHeader)
     {
@@ -146,25 +139,19 @@ public class AccountController
         return accountService.getAccountBalance(accountNumber, customerId);
     }
 
-    /////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
     //
     //  Method Name         : getMyAccounts
     //
-    //  Description         : Retrieves all bank accounts belonging to
-    //                        the currently logged-in customer.
-    //
-    //                        It extracts the customer's email from
-    //                        the JWT token and identifies the customer.
-    //
-    //                        It retrieves all accounts associated with
-    //                        the logged-in customer.
-    //
-    //                        The list of account details is returned
-    //                        as response DTOs.
+    //  Description         : Extracts the customer's email from the
+    //                        JWT token and retrieves the authenticated
+    //                        customer's ID. Fetches and returns a list
+    //                        of all bank accounts belonging to the
+    //                        logged-in customer.
     //
     //  Author              : Shubham Somanath Gadhe
     //
-    //  Date                : 23/09/2026
+    //  Date                : 13/09/2026
     //
     //////////////////////////////////////////////////////////////////
 
@@ -173,6 +160,7 @@ public class AccountController
             description = "Returns all the bank accounts belonging to the currently authenticated customer"
     )
     @GetMapping("/my-accounts")
+    
     public List<AccountResponseDTO> getMyAccounts(@RequestHeader("Authorization") String authorizationHeader)
     {
         String token = authorizationHeader.substring(7);
@@ -188,22 +176,16 @@ public class AccountController
     //
     //  Method Name         : getAccountById
     //
-    //  Description         : Retrieves details of a specific account
-    //                        for the currently logged-in customer.
-    //
-    //                        It extracts the customer's email from
-    //                        the JWT token and identifies the customer.
-    //
-    //                        It retrieves the account using the account
-    //                        ID after verifying that it belongs to the
-    //                        logged-in customer.
-    //
-    //                        The account details are returned as a
-    //                        response DTO.
+    //  Description         : Extracts the customer's email from the
+    //                        JWT token and retrieves the authenticated
+    //                        customer's ID. Retrieves the specified
+    //                        account after verifying that it belongs
+    //                        to the logged-in customer and returns
+    //                        the account details.
     //
     //  Author              : Shubham Somanath Gadhe
     //
-    //  Date                : 23/09/2026
+    //  Date                : 13/09/2026
     //
     //////////////////////////////////////////////////////////////////
 
@@ -212,6 +194,7 @@ public class AccountController
             description = "Return details of a specific bank account belonging to the authenticated customer"
     )
     @GetMapping("/{accountId}")
+    
     public AccountResponseDTO getAccountById(@PathVariable Long accountId,
                                              @RequestHeader("Authorization") String authorizationHeader)
     {
